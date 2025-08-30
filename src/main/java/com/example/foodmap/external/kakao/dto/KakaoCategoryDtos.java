@@ -1,14 +1,18 @@
 package com.example.foodmap.external.kakao.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 public class KakaoCategoryDtos {
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Meta(
             Integer total_count,
             Integer pageable_count,
             Boolean is_end
     ) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Document(
             String id,
             String place_name,
@@ -21,6 +25,7 @@ public class KakaoCategoryDtos {
             String y  // 위도
     ) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record CategorySearchResponse(
             Meta meta,
             List<Document> documents

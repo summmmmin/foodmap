@@ -1,47 +1,40 @@
 package com.example.foodmap.external.kakao;
 
+import com.example.foodmap.config.MockServerConfiguration;
 import com.example.foodmap.place.dto.Place;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Import(MockServerConfiguration.class)
 class KakaoLocalClientTest {
-
-    static MockWebServer server;
-
-    @BeforeAll
-    static void start() throws IOException {
-        server = new MockWebServer();
-        server.start();
-    }
-
-    @AfterAll
-    static void stop() throws IOException {
-        server.shutdown();
-    }
-
-    @DynamicPropertySource
-    static void overrideProps(DynamicPropertyRegistry registry) {
-        String baseUrl = server.url("/").toString().replaceAll("/$", "");
-        registry.add("kakao.api.base-url", () -> baseUrl);
-        registry.add("kakao.api.key", () -> "dummy");     // 헤더 검증에 사용
-        registry.add("kakao.api.timeout-ms", () -> "1000");
-    }
 
     @Autowired
     KakaoLocalClient client;
 
+    @Autowired
+    MockWebServer server;
+
+    @DynamicPropertySource
+    static void overrideProps(DynamicPropertyRegistry r) {
+        String baseUrl = MockServerConfiguration.server().url("/").toString().replaceAll("/$", "");
+        r.add("kakao.api.base-url", () -> baseUrl);
+        r.add("kakao.api.key", () -> "dummy");
+        r.add("kakao.api.timeout-ms", () -> "1000");
+    }
     @Test
+    @DisplayName("주소를 좌표로 변환")
     void geocodeAddress_returns_lat_lon() throws Exception {
         String body = """
         {
@@ -57,16 +50,18 @@ class KakaoLocalClientTest {
                 .setHeader("Content-Type", "application/json")
                 .setBody(body));
 
-        var result = client.geocodeAddress("서울 강남구 테헤란로 123");
-        assertThat(result).isPresent();
-        double[] latlon = result.get();
-        assertThat(latlon[0]).isEqualTo(37.498);   // lat
-        assertThat(latlon[1]).isEqualTo(127.027);  // lon
+        Optional<double[]> result = client.geocodeAddress("서울 강남구 테헤란로 123");
+        assertAll(
+                () -> assertTrue(result.isPresent(), "좌표가 존재해야 한다"),
+                () -> assertEquals(37.498, result.get()[0], 1e-9, "위도(lat)"),
+                () -> assertEquals(127.027, result.get()[1], 1e-9, "경도(lon)")
+        );
 
         // 헤더(Authorization)까지 들어갔는지 확인
         var recorded = server.takeRequest();
-        assertThat(recorded.getPath()).startsWith("/v2/local/search/address.json");
-        assertThat(recorded.getHeader("Authorization")).isEqualTo("KakaoAK dummy");
+        assertNotNull(recorded, "요청이 수집 필요");
+        assertTrue(recorded.getPath().startsWith("/v2/local/search/address.json"));
+        assertEquals("KakaoAK dummy", recorded.getHeader("Authorization"));
     }
 
     @Test
@@ -96,17 +91,22 @@ class KakaoLocalClientTest {
                 .setBody(body));
 
         List<Place> list = client.searchCategory("FD6", 127.0, 37.5, 1500, 10, 1);
-        assertThat(list).hasSize(1);
+        assertAll(
+                () -> assertNotNull(list),
+                () -> assertEquals(1, list.size())
+        );
         Place p = list.get(0);
-        assertThat(p.kakaoPlaceId()).isEqualTo("K1");
-        assertThat(p.name()).isEqualTo("김밥천국");
-        assertThat(p.categoryGroupCode()).isEqualTo("FD6");
-        assertThat(p.latitude()).isEqualTo(37.501);
-        assertThat(p.longitude()).isEqualTo(127.001);
+        assertAll(
+                () -> assertEquals("K1", p.kakaoPlaceId()),
+                () -> assertEquals("김밥천국", p.name()),
+                () -> assertEquals("FD6", p.categoryGroupCode()),
+                () -> assertEquals(37.501, p.latitude(), 1e-9),
+                () -> assertEquals(127.001, p.longitude(), 1e-9)
+        );
 
         var recorded = server.takeRequest();
-        assertThat(recorded.getPath()).startsWith("/v2/local/search/category.json");
-        assertThat(recorded.getHeader("Authorization")).isEqualTo("KakaoAK dummy");
+        assertTrue(recorded.getPath().startsWith("/v2/local/search/category.json"));
+        assertEquals("KakaoAK dummy", recorded.getHeader("Authorization"));
     }
 
     @Test
@@ -120,6 +120,6 @@ class KakaoLocalClientTest {
                 .setBody(empty));
 
         var result = client.geocodeAddress("없는 주소");
-        assertThat(result).isEmpty();
+        assertTrue(result.isEmpty());
     }
 }
