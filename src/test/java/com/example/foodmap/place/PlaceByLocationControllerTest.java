@@ -1,5 +1,7 @@
 package com.example.foodmap.place;
 
+import com.example.foodmap.common.error.ValidationException;
+import com.example.foodmap.common.web.GlobalExceptionHandler;
 import com.example.foodmap.place.controller.PlaceByLocationController;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = PlaceByLocationController.class)
+@Import(GlobalExceptionHandler.class)
 class PlaceByLocationControllerTest {
 
     @Autowired MockMvc mvc;
@@ -52,7 +56,14 @@ class PlaceByLocationControllerTest {
 
     @Test
     void byLocation_missingParams_returns400() throws Exception {
+        Mockito.when(service.findByLocation(any(PlaceSearchRequest.class)))
+                .thenThrow(new ValidationException("주소 또는 좌표(x,y) 중 하나는 반드시 필요합니다."));
+
         mvc.perform(get("/api/places/by-location"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("E001"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.path").value("/api/places/by-location"));
     }
 }

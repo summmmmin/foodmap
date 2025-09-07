@@ -1,5 +1,6 @@
 package com.example.foodmap.place;
 
+import com.example.foodmap.common.error.ValidationException;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
 import com.example.foodmap.place.service.GeocodeService;
@@ -77,7 +78,7 @@ public class PlaceSearchServiceTest {
                 .longitude(127.0)   // 위도 없음
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> service.findByLocation(req));
+        assertThrows(ValidationException.class, () -> service.findByLocation(req));
         verifyNoInteractions(geocodeService, nearbySearchService);
     }
 

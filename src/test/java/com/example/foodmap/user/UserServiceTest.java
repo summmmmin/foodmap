@@ -1,5 +1,6 @@
 package com.example.foodmap.user;
 
+import com.example.foodmap.common.error.NotFoundException;
 import com.example.foodmap.user.domain.User;
 import com.example.foodmap.user.domain.UserRepository;
 import com.example.foodmap.user.dto.UserResponse;
@@ -35,6 +36,6 @@ public class UserServiceTest {
     @Test
     void getById_whenNotFound_throwsNoSuchElementException() {
         when(repo.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> service.getById(999L));
+        assertThrows(NotFoundException.class, () -> service.getById(999L));
     }
 }

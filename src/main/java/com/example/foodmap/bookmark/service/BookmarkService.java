@@ -7,7 +7,7 @@ import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.repo.PlaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.example.foodmap.common.error.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -34,7 +34,7 @@ public class BookmarkService {
         placeRepository.upsertFromExternal(place);
         Long placeId = placeRepository.findIdByKakaoPlaceId(place.kakaoPlaceId());
         if (placeId == null) {
-            throw new IllegalStateException("Place upsert failed. kakao_place_id=" + place.kakaoPlaceId());
+            throw new BusinessException(ErrorCode.PLACE_UPSERT_FAILED, "Place upsert failed. kakao_place_id=" + place.kakaoPlaceId());
         }
         bookmarkRepository.upsert(userId, placeId, memo);
     }
@@ -50,7 +50,7 @@ public class BookmarkService {
     public BookmarkView getBookmarkView(long bookmarkId) {
         BookmarkView view = bookmarkQueryRepository.findViewByBookmarkId(bookmarkId);
         if (view == null) {
-            throw new NoSuchElementException("Bookmark not found: id=" + bookmarkId);
+            throw new NotFoundException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
         }
         return view;
     }
@@ -71,7 +71,7 @@ public class BookmarkService {
     public void deleteByBookmarkId(long bookmarkId) {
         int affected = bookmarkRepository.deleteByBookmarkId(bookmarkId);
         if (affected == 0) {
-            throw new NoSuchElementException("Bookmark not found: id=" + bookmarkId);
+            throw new NotFoundException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
         }
     }
 }

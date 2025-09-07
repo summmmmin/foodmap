@@ -3,6 +3,7 @@ package com.example.foodmap.bookmark.service;
 import com.example.foodmap.bookmark.dto.BookmarkView;
 import com.example.foodmap.bookmark.repo.BookmarkQueryRepository;
 import com.example.foodmap.bookmark.repo.BookmarkRepository;
+import com.example.foodmap.common.error.NotFoundException;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.repo.PlaceRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +49,7 @@ class BookmarkServiceTest {
     void getBookmarkView_notFound_shouldThrow() {
         when(bookmarkQueryRepository.findViewByBookmarkId(999L)).thenReturn(null);
         assertThatThrownBy(() -> service.getBookmarkView(999L))
-                .isInstanceOf(NoSuchElementException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Bookmark not found");
     }
 
