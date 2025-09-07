@@ -17,14 +17,12 @@ public class GeocodeService {
     }
 
     // 주소 -> 좌표 결과 캐시
-    @Cacheable(cacheNames = "geocode", key = "#address", unless = "#result == null")
-    public double[] geocodeRaw(String address) {
-        if (!StringUtils.hasText(address)) return null;
-        return kakao.geocodeAddress(address)
-                .orElse(null);
+    @Cacheable(cacheNames = "geocode", key = "#address",
+            condition = "T(org.springframework.util.StringUtils).hasText(#address)"
+            ,unless = "#result == null")
+    public Optional<double[]> geocode(String address) {
+        if (!StringUtils.hasText(address)) return Optional.empty();
+        return kakao.geocodeAddress(address);
     }
 
-    public Optional<double[]> geocode(String address) {
-        return Optional.ofNullable(geocodeRaw(address));
-    }
 }

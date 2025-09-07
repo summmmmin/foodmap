@@ -3,9 +3,11 @@ package com.example.foodmap.place;
 import com.example.foodmap.external.kakao.KakaoLocalClient;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.service.NearbySearchService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
@@ -20,6 +22,16 @@ class NearbySearchServiceCacheTest {
 
     @MockitoBean
     KakaoLocalClient kakaoLocalClient;
+
+    @Autowired
+    RedisConnectionFactory redisConnectionFactory;
+
+    @BeforeEach
+    void flushRedis() {
+        try (var conn = redisConnectionFactory.getConnection()) {
+            conn.serverCommands().flushAll(); // 테스트 격리
+        }
+    }
 
     @Test
     void nearbySearch_shouldUseCacheOnSecondCall() {
