@@ -1,5 +1,6 @@
 package com.example.foodmap.bookmark.controller;
 
+import com.example.foodmap.bookmark.domain.BookmarkEntity;
 import com.example.foodmap.bookmark.dto.BookmarkView;
 import com.example.foodmap.bookmark.service.BookmarkService;
 import com.example.foodmap.place.dto.BookmarkAddRequest;
@@ -44,13 +45,13 @@ public class BookmarkController {
 
     @Operation(summary = "북마크 id로 북마크 단건 조회")
     @GetMapping("/{bookmarkId}")
-    public ResponseEntity<BookmarkView> getOne(@PathVariable long bookmarkId) {
+    public ResponseEntity<BookmarkEntity> getOne(@PathVariable long bookmarkId) {
         return ResponseEntity.ok(service.getBookmarkView(bookmarkId));
     }
 
     @Operation(summary = "사용자별 북마크 목록 조회")
     @GetMapping
-    public ResponseEntity<List<BookmarkView>> listByUser(
+    public ResponseEntity<List<BookmarkEntity>> listByUser(
             @RequestHeader("X-USER-ID") long userId
     ) {
         return ResponseEntity.ok(service.listByUserId(userId));
