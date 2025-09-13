@@ -1,5 +1,7 @@
 package com.example.foodmap.place.service;
 
+import com.example.foodmap.common.error.BusinessException;
+import com.example.foodmap.common.error.ErrorCode;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
 import com.example.foodmap.place.domain.CategoryGroup;
@@ -38,7 +40,7 @@ public class PlaceSearchService {
             longitude = geocode.get()[1];
         } else {
             if (request.getLongitude() == null || request.getLatitude() == null) {
-                throw new IllegalArgumentException("주소나 좌표가 입력되지 않음");
+                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "주소 또는 좌표(x,y) 중 하나는 반드시 필요합니다.");
             }
             longitude = request.getLongitude();
             latitude = request.getLatitude();

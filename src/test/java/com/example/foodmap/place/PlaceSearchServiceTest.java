@@ -1,5 +1,7 @@
 package com.example.foodmap.place;
 
+import com.example.foodmap.common.error.BusinessException;
+import com.example.foodmap.common.error.ErrorCode;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
 import com.example.foodmap.place.service.GeocodeService;
@@ -12,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 public class PlaceSearchServiceTest {
@@ -73,11 +77,18 @@ public class PlaceSearchServiceTest {
     @Test
     @DisplayName("좌표 기반: 위도 누락 예외")
     void coords_missingLatitude_throws() {
-        var req = PlaceSearchRequest.builder()
+        var placeSearchRequest = PlaceSearchRequest.builder()
                 .longitude(127.0)   // 위도 없음
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> service.findByLocation(req));
+        assertThatThrownBy(() -> service.findByLocation(placeSearchRequest))
+                .isInstanceOf(BusinessException.class)
+                .satisfies(exception -> {
+                    BusinessException businessException = (BusinessException) exception;
+                    assertThat(businessException.getErrorCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE);
+                })
+                .hasMessageContaining("좌표");
+
         verifyNoInteractions(geocodeService, nearbySearchService);
     }
 

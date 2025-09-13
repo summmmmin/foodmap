@@ -44,9 +44,6 @@ public class PlaceByLocationController {
             @Parameter(description = "카테고리 그룹 코드 (기본 FD6=음식점)")
             @RequestParam(required = false) String categoryGroupCode
     ) {
-        if ((address == null || address.isBlank()) && (x == null || y == null)) {
-            return ResponseEntity.badRequest().build();
-        }
         PlaceSearchRequest req = PlaceSearchRequest.builder()
                 .address(address)
                 .longitude(x)
