@@ -50,7 +50,7 @@ public class BookmarkService {
     public BookmarkView getBookmarkView(long bookmarkId) {
         BookmarkView view = bookmarkQueryRepository.findViewByBookmarkId(bookmarkId);
         if (view == null) {
-            throw new NotFoundException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
+            throw new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
         }
         return view;
     }
@@ -71,7 +71,7 @@ public class BookmarkService {
     public void deleteByBookmarkId(long bookmarkId) {
         int affected = bookmarkRepository.deleteByBookmarkId(bookmarkId);
         if (affected == 0) {
-            throw new NotFoundException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
+            throw new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
         }
     }
 }

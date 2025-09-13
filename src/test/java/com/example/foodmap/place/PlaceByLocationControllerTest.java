@@ -1,6 +1,7 @@
 package com.example.foodmap.place;
 
-import com.example.foodmap.common.error.ValidationException;
+import com.example.foodmap.common.error.BusinessException;
+import com.example.foodmap.common.error.ErrorCode;
 import com.example.foodmap.common.web.GlobalExceptionHandler;
 import com.example.foodmap.place.controller.PlaceByLocationController;
 import com.example.foodmap.place.dto.Place;
@@ -57,7 +58,7 @@ class PlaceByLocationControllerTest {
     @Test
     void byLocation_missingParams_returns400() throws Exception {
         Mockito.when(service.findByLocation(any(PlaceSearchRequest.class)))
-                .thenThrow(new ValidationException("주소 또는 좌표(x,y) 중 하나는 반드시 필요합니다."));
+                .thenThrow(new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "주소 또는 좌표(x,y) 중 하나는 반드시 필요합니다."));
 
         mvc.perform(get("/api/places/by-location"))
                 .andExpect(status().isBadRequest())

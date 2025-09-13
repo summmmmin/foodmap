@@ -17,7 +17,7 @@ public class UserService {
     public UserResponse getById(Long id) {
         User user = repo.findById(id)
                 .orElseThrow(() ->
-                        new NotFoundException(ErrorCode.USER_NOT_FOUND, "사용자 없음: " + id));
+                        new BusinessException(ErrorCode.USER_NOT_FOUND, "사용자 없음: " + id));
         return UserResponse.from(user);
     }
 }

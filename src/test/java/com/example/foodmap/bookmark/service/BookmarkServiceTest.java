@@ -3,14 +3,14 @@ package com.example.foodmap.bookmark.service;
 import com.example.foodmap.bookmark.dto.BookmarkView;
 import com.example.foodmap.bookmark.repo.BookmarkQueryRepository;
 import com.example.foodmap.bookmark.repo.BookmarkRepository;
-import com.example.foodmap.common.error.NotFoundException;
+import com.example.foodmap.common.error.BusinessException;
+import com.example.foodmap.common.error.ErrorCode;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.repo.PlaceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,8 +49,11 @@ class BookmarkServiceTest {
     void getBookmarkView_notFound_shouldThrow() {
         when(bookmarkQueryRepository.findViewByBookmarkId(999L)).thenReturn(null);
         assertThatThrownBy(() -> service.getBookmarkView(999L))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Bookmark not found");
+                .isInstanceOf(BusinessException.class)
+                .satisfies(exception -> {
+                    BusinessException businessException = (BusinessException) exception;
+                    assertThat(businessException.getErrorCode()).isEqualTo(ErrorCode.BOOKMARK_NOT_FOUND);
+                });
     }
 
     @Test
