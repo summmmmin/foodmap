@@ -45,13 +45,13 @@ public class BookmarkController {
 
     @Operation(summary = "북마크 id로 북마크 단건 조회")
     @GetMapping("/{bookmarkId}")
-    public ResponseEntity<BookmarkEntity> getOne(@PathVariable long bookmarkId) {
+    public ResponseEntity<BookmarkView> getOne(@PathVariable long bookmarkId) {
         return ResponseEntity.ok(service.getBookmarkView(bookmarkId));
     }
 
     @Operation(summary = "사용자별 북마크 목록 조회")
     @GetMapping
-    public ResponseEntity<List<BookmarkEntity>> listByUser(
+    public ResponseEntity<List<BookmarkView>> listByUser(
             @RequestHeader("X-USER-ID") long userId
     ) {
         return ResponseEntity.ok(service.listByUserId(userId));

@@ -2,6 +2,7 @@ package com.example.foodmap.bookmark.service;
 
 import com.example.foodmap.bookmark.domain.BookmarkEntity;
 import com.example.foodmap.bookmark.dto.BookmarkView;
+import com.example.foodmap.bookmark.repo.BookmarkQueryRepository;
 import com.example.foodmap.bookmark.repo.BookmarkUpsertRepository;
 import com.example.foodmap.bookmark.repo.BookmarkRepository;
 import com.example.foodmap.place.dto.Place;
@@ -10,6 +11,7 @@ import com.example.foodmap.place.repo.PlaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.foodmap.common.error.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,14 +21,16 @@ public class BookmarkService {
     private final PlaceRepository placeRepository;
     private final PlaceUpsertRepository placeUpsertRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final BookmarkQueryRepository bookmarkQueryRepository;
     private final BookmarkUpsertRepository bookmarkUpsertRepository;
 
     public BookmarkService(PlaceRepository placeRepository, PlaceUpsertRepository placeUpsertRepository,
-                           BookmarkRepository bookmarkRepository,
+                           BookmarkRepository bookmarkRepository, BookmarkQueryRepository bookmarkQueryRepository,
                            BookmarkUpsertRepository bookmarkUpsertRepository) {
         this.placeRepository = placeRepository;
         this.placeUpsertRepository = placeUpsertRepository;
         this.bookmarkRepository = bookmarkRepository;
+        this.bookmarkQueryRepository = bookmarkQueryRepository;
         this.bookmarkUpsertRepository = bookmarkUpsertRepository;
     }
 
@@ -51,18 +55,19 @@ public class BookmarkService {
 
     /** 북마크 단건 조회  */
     @Transactional(readOnly = true)
-    public BookmarkEntity getBookmarkView(long bookmarkId) {
+    public BookmarkView getBookmarkView(long bookmarkId) {
 
-        return bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() ->
-                        new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND,
-                                "Bookmark not found: id=" + bookmarkId));
+        BookmarkView view = bookmarkQueryRepository.findViewByBookmarkId(bookmarkId);
+        if (view == null) {
+            throw new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND, "Bookmark not found: id=" + bookmarkId);
+        }
+        return view;
     }
 
     /** 사용자별 북마크 목록 조회 */
     @Transactional(readOnly = true)
-    public List<BookmarkEntity> listByUserId(long userId) {
-        return bookmarkRepository.findByUserIdOrderByCreatedAtDescIdDesc(userId);
+    public List<BookmarkView> listByUserId(long userId) {
+        return bookmarkQueryRepository.findViewsByUserId(userId);
     }
 
     /** 삭제 */

@@ -17,7 +17,8 @@ class PlaceRepositoryTest {
 
     @Resource
     PlaceRepository placeRepository;
-
+    @Resource
+    PlaceUpsertRepository placeUpsertRepository;
     @Resource
     JdbcTemplate jdbcTemplate;
 
@@ -35,8 +36,8 @@ class PlaceRepositoryTest {
         );
 
         // when
-        placeRepository.upsertFromExternal(p);
-        Long id1 = placeRepository.findIdByKakaoPlaceId("kakao-123");
+        placeUpsertRepository.upsertFromExternal(p);
+        Long id1 = placeRepository.findIdByKakaoPlaceIdOrNull("kakao-123");
 
         // then
         assertThat(id1).isNotNull();
@@ -51,8 +52,8 @@ class PlaceRepositoryTest {
                 "서울",
                 37.5001, 127.0001
         );
-        placeRepository.upsertFromExternal(p2);
-        Long id2 = placeRepository.findIdByKakaoPlaceId("kakao-123");
+        placeUpsertRepository.upsertFromExternal(p2);
+        Long id2 = placeRepository.findIdByKakaoPlaceIdOrNull("kakao-123");
 
         assertThat(id2).isEqualTo(id1);
 
