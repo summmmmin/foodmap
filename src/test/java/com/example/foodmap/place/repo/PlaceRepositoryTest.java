@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import jakarta.annotation.Resource;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(MySqlContainerConfig.class)
@@ -40,7 +40,7 @@ class PlaceRepositoryTest {
         Long id1 = placeRepository.findIdByKakaoPlaceIdOrNull("kakao-123");
 
         // then
-        assertThat(id1).isNotNull();
+        assertNotNull(id1);
 
         // when (UPSERT update path)
         Place p2 = new Place(
@@ -55,10 +55,10 @@ class PlaceRepositoryTest {
         placeUpsertRepository.upsertFromExternal(p2);
         Long id2 = placeRepository.findIdByKakaoPlaceIdOrNull("kakao-123");
 
-        assertThat(id2).isEqualTo(id1);
+        assertEquals(id1, id2);
 
         // 좌표/이름 수정 확인
-        var name = jdbcTemplate.queryForObject("SELECT name FROM place WHERE id=?", String.class, id1);
-        assertThat(name).isEqualTo("식당(수정)");
+        var entity = placeRepository.findById(id1).orElseThrow();
+        assertEquals("식당(수정)", entity.name());
     }
 }
