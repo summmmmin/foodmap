@@ -1,5 +1,6 @@
 package com.example.foodmap.bookmark.controller;
 
+import com.example.foodmap.bookmark.domain.BookmarkEntity;
 import com.example.foodmap.bookmark.dto.BookmarkView;
 import com.example.foodmap.bookmark.service.BookmarkService;
 import com.example.foodmap.place.dto.BookmarkAddRequest;
