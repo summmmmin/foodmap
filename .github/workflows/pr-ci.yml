@@ -1,0 +1,70 @@
+name: PR CI (Gradle Test)
+
+on:
+  pull_request:
+    # PR이 열릴 때/커밋 추가될 때/재오픈/드래프트→Ready 전환 시에 동작
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# 같은 PR에 중복 실행되면 가장 마지막 것만 남기고 나머지는 취소
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+# PR 코멘트/체크 작성에 필요한 권한
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest    # GitHub 호스트 러너 (Docker 내장 → Testcontainers OK)
+
+    steps:
+      # 1) 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) JDK 24
+      - name: Set up JDK 24
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '24'
+
+      # 3) Gradle 캐시/Config Cache/Wrapper 캐시 자동 관리
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # 4) Gradle Wrapper 보안 검증
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      # 5) 테스트 실행
+      - name: Run tests (profile=test)
+        run: |
+          chmod +x gradlew
+          ./gradlew clean test -Dspring.profiles.active=test --stacktrace --info
+        env:
+          CI: true
+
+      # 6) 테스트 리포트 아티팩트 업로드 (성공/실패와 무관하게 업로드)
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/test/**
+            **/build/test-results/test/*.xml
+
+      # 7) PR에 JUnit 결과를 체크/코멘트로 게시
+      - name: Publish Unit Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/build/test-results/test/*.xml
+            **/build/test-results/*Test/*.xml
+          check_name: "JUnit Results"
+          comment_mode: failures
