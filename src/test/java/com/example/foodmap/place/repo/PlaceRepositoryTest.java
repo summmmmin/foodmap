@@ -12,7 +12,6 @@ import jakarta.annotation.Resource;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Import(MySqlContainerConfig.class)
 class PlaceRepositoryTest {
 
     @Resource
