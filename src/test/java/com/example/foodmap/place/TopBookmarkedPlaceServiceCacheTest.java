@@ -1,5 +1,6 @@
 package com.example.foodmap.place;
 
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.TopBookmarkedPlaceView;
 import com.example.foodmap.place.repo.TopBookmarkedPlaceQueryRepository;
 import com.example.foodmap.place.service.TopBookmarkedPlaceService;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 @SpringJUnitConfig(classes = TopBookmarkedPlaceServiceCacheTest.Config.class)
-class TopBookmarkedPlaceServiceCacheTest {
+class TopBookmarkedPlaceServiceCacheTest extends MySqlContainerConfig {
 
     @Configuration
     @EnableCaching

@@ -12,7 +12,7 @@ import jakarta.annotation.Resource;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PlaceRepositoryTest {
+class PlaceRepositoryTest extends MySqlContainerConfig{
 
     @Resource
     PlaceRepository placeRepository;
