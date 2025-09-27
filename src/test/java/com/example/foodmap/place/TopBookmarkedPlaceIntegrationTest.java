@@ -5,41 +5,19 @@ import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.TopBookmarkedPlaceView;
 import com.example.foodmap.place.service.TopBookmarkedPlaceService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Import(MySqlContainerConfig.class)
-class TopBookmarkedPlaceIntegrationTest {
+class TopBookmarkedPlaceIntegrationTest extends MySqlContainerConfig{
 
     @Autowired BookmarkService bookmarkService;
     @Autowired TopBookmarkedPlaceService topService;
-    @Autowired JdbcTemplate jdbc;
-    @Autowired(required = false)
-    CacheManager cacheManager;
-
-    @BeforeEach
-    void clean() {
-        // DB
-        jdbc.update("SET FOREIGN_KEY_CHECKS=0");
-        jdbc.update("TRUNCATE TABLE bookmark");
-        jdbc.update("TRUNCATE TABLE place");
-        jdbc.update("SET FOREIGN_KEY_CHECKS=1");
-
-        // 캐시
-        if (cacheManager != null && cacheManager.getCache("placeTopBookmarked") != null) {
-            cacheManager.getCache("placeTopBookmarked").clear();
-        }
-    }
 
     @Test
     void topBookmarked_countsAndOrder_viaServices() {
@@ -62,8 +40,8 @@ class TopBookmarkedPlaceIntegrationTest {
         // then: K1(3) 먼저, K2(1) 다음
         assertAll(
                 () -> assertEquals(2, list.size()),
-                () -> assertEquals("K1", list.get(0).kakaoPlaceId()),
-                () -> assertEquals(3, list.get(0).bookmarkCount()),
+                () -> assertEquals("K1", list.getFirst().kakaoPlaceId()),
+                () -> assertEquals(3, list.getFirst().bookmarkCount()),
                 () -> assertEquals("K2", list.get(1).kakaoPlaceId()),
                 () -> assertEquals(1, list.get(1).bookmarkCount())
         );

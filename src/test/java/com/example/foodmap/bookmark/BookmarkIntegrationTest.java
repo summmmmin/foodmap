@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(MySqlContainerConfig.class)
 class BookmarkIntegrationTest {
 
     private static final String USER_ID_HEADER_NAME = "X-USER-ID";
