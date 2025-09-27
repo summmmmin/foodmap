@@ -3,6 +3,7 @@ package com.example.foodmap.place;
 import com.example.foodmap.common.error.BusinessException;
 import com.example.foodmap.common.error.ErrorCode;
 import com.example.foodmap.common.web.GlobalExceptionHandler;
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.controller.PlaceByLocationController;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = PlaceByLocationController.class)
 @Import(GlobalExceptionHandler.class)
-class PlaceByLocationControllerTest {
+class PlaceByLocationControllerTest extends MySqlContainerConfig {
 
     @Autowired MockMvc mvc;
 

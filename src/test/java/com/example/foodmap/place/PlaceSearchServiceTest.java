@@ -2,6 +2,7 @@ package com.example.foodmap.place;
 
 import com.example.foodmap.common.error.BusinessException;
 import com.example.foodmap.common.error.ErrorCode;
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.dto.PlaceSearchRequest;
 import com.example.foodmap.place.service.GeocodeService;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-public class PlaceSearchServiceTest {
+public class PlaceSearchServiceTest extends MySqlContainerConfig {
 
     NearbySearchService nearbySearchService;
     GeocodeService geocodeService;

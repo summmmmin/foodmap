@@ -3,6 +3,7 @@ package com.example.foodmap.bookmark.controller;
 import com.example.foodmap.bookmark.domain.BookmarkEntity;
 import com.example.foodmap.bookmark.dto.BookmarkView;
 import com.example.foodmap.bookmark.service.BookmarkService;
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.BookmarkAddRequest;
 import com.example.foodmap.place.dto.Place;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BookmarkController.class)
-class BookmarkControllerTest {
+class BookmarkControllerTest extends MySqlContainerConfig {
 
     @Resource
     MockMvc mockMvc;
