@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class TopBookmarkedPlaceIntegrationTest extends MySqlContainerConfig{
+class TopBookmarkedPlaceIntegrationTest extends MySqlContainerConfig {
 
     @Autowired BookmarkService bookmarkService;
     @Autowired TopBookmarkedPlaceService topService;
@@ -40,8 +40,10 @@ class TopBookmarkedPlaceIntegrationTest extends MySqlContainerConfig{
         // then: K1(3) 먼저, K2(1) 다음
         assertAll(
                 () -> assertEquals(2, list.size()),
+
                 () -> assertEquals("K1", list.getFirst().kakaoPlaceId()),
                 () -> assertEquals(3, list.getFirst().bookmarkCount()),
+
                 () -> assertEquals("K2", list.get(1).kakaoPlaceId()),
                 () -> assertEquals(1, list.get(1).bookmarkCount())
         );
