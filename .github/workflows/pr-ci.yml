@@ -36,10 +36,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      # 4) Gradle Wrapper 보안 검증
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
       # 5) 테스트 실행
       - name: Run tests (profile=test)
         run: |
