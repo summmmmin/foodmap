@@ -1,5 +1,6 @@
 package com.example.foodmap.place;
 
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.external.kakao.KakaoLocalClient;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.service.NearbySearchService;
@@ -15,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 @SpringBootTest
-class NearbySearchServiceCacheTest {
+class NearbySearchServiceCacheTest extends MySqlContainerConfig {
 
     @Autowired
     NearbySearchService nearbySearchService;

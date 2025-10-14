@@ -7,6 +7,7 @@ import com.example.foodmap.bookmark.repo.BookmarkUpsertRepository;
 import com.example.foodmap.bookmark.repo.BookmarkRepository;
 import com.example.foodmap.common.error.BusinessException;
 import com.example.foodmap.common.error.ErrorCode;
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.Place;
 import com.example.foodmap.place.repo.PlaceRepository;
 import com.example.foodmap.place.repo.PlaceUpsertRepository;
@@ -18,7 +19,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class BookmarkServiceTest {
+class BookmarkServiceTest extends MySqlContainerConfig {
 
     PlaceRepository placeRepository;
     PlaceUpsertRepository placeUpsertRepository;

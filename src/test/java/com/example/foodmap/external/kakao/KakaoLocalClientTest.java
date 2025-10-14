@@ -1,6 +1,7 @@
 package com.example.foodmap.external.kakao;
 
 import com.example.foodmap.config.MockServerConfiguration;
+import com.example.foodmap.config.MySqlContainerConfig;
 import com.example.foodmap.place.dto.Place;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(MockServerConfiguration.class)
-class KakaoLocalClientTest {
+class KakaoLocalClientTest extends MySqlContainerConfig {
 
     @Autowired
     KakaoLocalClient client;

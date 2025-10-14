@@ -13,8 +13,7 @@ import jakarta.annotation.Resource;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@Import(MySqlContainerConfig.class)
-class BookmarkRepositoryTest {
+class BookmarkRepositoryTest extends MySqlContainerConfig{
 
     @Resource
     PlaceRepository placeRepository;
