@@ -32,11 +32,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 	testImplementation 'org.testcontainers:junit-jupiter:1.20.2'
 	testImplementation 'org.testcontainers:mysql:1.20.2'
 	testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.springframework.batch:spring-batch-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	compileOnly 'org.projectlombok:lombok'

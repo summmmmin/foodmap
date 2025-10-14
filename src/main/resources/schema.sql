@@ -46,3 +46,17 @@ CREATE TABLE IF NOT EXISTS bookmark (
     UNIQUE KEY uk_bookmark_user_place (user_id, place_id),
     KEY idx_bookmark_place (place_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS top_bookmarked_snapshot_hist (
+    snapshot_date          DATE         NOT NULL,
+    period_days            INT          NOT NULL,
+    category_group_code    VARCHAR(8)   NULL,
+    rank_no                INT          NOT NULL,
+    place_id               BIGINT       NOT NULL,
+    bookmark_count         BIGINT       NOT NULL,
+    created_at             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (snapshot_date, period_days, category_group_code, rank_no),
+    UNIQUE KEY uq_snapshot_place (snapshot_date, period_days, category_group_code, place_id),
+    KEY idx_bookmark_lookup (snapshot_date, period_days, category_group_code, rank_no, place_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
